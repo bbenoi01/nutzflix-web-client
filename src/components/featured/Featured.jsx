@@ -1,12 +1,33 @@
 import { InfoOutlined, PlayArrow } from '@material-ui/icons';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import './featured.scss';
 
 const Featured = ({ type }) => {
+	const [featured, setFeatured] = useState([]);
+
+	useEffect(() => {
+		const getRandomContent = async () => {
+			try {
+				const res = await axios.get(`/videos/random?type=${type}`, {
+					headers: {
+						Authorization:
+							'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNDM4YjZjY2NlM2I5YjBjYzQyNGQwMSIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY0ODYyMzI0OCwiZXhwIjoxNjQ5MDU1MjQ4fQ.7DMwZpdAXWSgJBiOd-NRV-HgBY_dJnyqW8UWsS_EgKM',
+					},
+				});
+				setFeatured(res?.data[0]);
+			} catch (err) {
+				console.log(err);
+			}
+		};
+		getRandomContent();
+	}, [type]);
+
 	return (
 		<div className='featured'>
 			{type && (
 				<div className='category'>
-					<span>{type === 'movie' ? 'Movies' : 'Series'}</span>
+					<span>{type === 'movies' ? 'Movies' : 'Series'}</span>
 					<select name='genre' id='genre'>
 						<option>Genre</option>
 						<option value='adventure'>Adventure</option>
@@ -25,18 +46,10 @@ const Featured = ({ type }) => {
 					</select>
 				</div>
 			)}
-			<img src='iw.png' alt='' />
+			<img src={featured?.img} alt='' />
 			<div className='info'>
-				<img
-					src='https://occ-0-1432-1433.1.nflxso.net/dnm/api/v6/LmEnxtiAuzezXBjYXPuDgfZ4zZQ/AAAABQq7tk0559I6V-2JOzeZUVb9NBKmKbBGHy5tFraxB9jN-O9cBB595XlGhG9Ao2JK2aF3Q0ydLBYyFHSe0OFyThDRCqsrVt-bioHd.webp?r=933'
-					alt=''
-				/>
-				<span className='desc'>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio quasi,
-					illum sint ad facilis sequi consequatur tempore eaque recusandae
-					asperiores, perferendis vel iure deserunt ex molestiae praesentium
-					magni totam laudantium?
-				</span>
+				<img src={featured?.imgTitle} alt='' />
+				<span className='desc'>{featured?.desc}</span>
 				<div className='buttons'>
 					<button className='play'>
 						<PlayArrow />
