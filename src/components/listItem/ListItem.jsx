@@ -6,7 +6,7 @@ import {
 	ThumbUpAltOutlined,
 } from '@material-ui/icons';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import nutzflixApi from '../../api/nutzflixApi';
 import { Link } from 'react-router-dom';
 
 const ListItem = ({ index, item }) => {
@@ -16,13 +16,7 @@ const ListItem = ({ index, item }) => {
 	useEffect(() => {
 		const getVideo = async () => {
 			try {
-				const res = await axios.get('/videos/find/' + item, {
-					headers: {
-						Authorization:
-							'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNDM4YjZjY2NlM2I5YjBjYzQyNGQwMSIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY0ODYyMzI0OCwiZXhwIjoxNjQ5MDU1MjQ4fQ.7DMwZpdAXWSgJBiOd-NRV-HgBY_dJnyqW8UWsS_EgKM',
-					},
-				});
-
+				const res = await nutzflixApi.get('/videos/find/' + item);
 				setVideo(res.data);
 			} catch (err) {
 				console.log(err);
