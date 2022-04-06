@@ -1,27 +1,14 @@
 import { InfoOutlined, PlayArrow } from '@material-ui/icons';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
 import './featured.scss';
 
-const Featured = ({ type }) => {
-	const [featured, setFeatured] = useState([]);
+import { getRandomContent } from '../../reducers/videoReducer/VideoActions';
 
+const Featured = ({ type, dispatch, featured }) => {
 	useEffect(() => {
-		const getRandomContent = async () => {
-			try {
-				const res = await axios.get(`/videos/random?type=${type}`, {
-					headers: {
-						Authorization:
-							'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNDM4YjZjY2NlM2I5YjBjYzQyNGQwMSIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY0ODYyMzI0OCwiZXhwIjoxNjQ5MDU1MjQ4fQ.7DMwZpdAXWSgJBiOd-NRV-HgBY_dJnyqW8UWsS_EgKM',
-					},
-				});
-				setFeatured(res?.data[0]);
-			} catch (err) {
-				console.log(err);
-			}
-		};
-		getRandomContent();
-	}, [type]);
+		dispatch(getRandomContent(type));
+	}, [type, dispatch]);
 
 	return (
 		<div className='featured'>
@@ -46,23 +33,33 @@ const Featured = ({ type }) => {
 					</select>
 				</div>
 			)}
-			<img src={featured?.img} alt='' />
-			<div className='info'>
-				<img src={featured?.imgTitle} alt='' />
-				<span className='desc'>{featured?.desc}</span>
-				<div className='buttons'>
-					<button className='play'>
-						<PlayArrow />
-						<span>Play</span>
-					</button>
-					<button className='more'>
-						<InfoOutlined />
-						<span>Info</span>
-					</button>
-				</div>
-			</div>
+			{featured && (
+				<>
+					<img src={featured?.img} alt='' />
+					<div className='info'>
+						<img src={featured?.imgTitle} alt='' />
+						<span className='desc'>{featured?.desc}</span>
+						<div className='buttons'>
+							<button className='play'>
+								<PlayArrow />
+								<span>Play</span>
+							</button>
+							<button className='more'>
+								<InfoOutlined />
+								<span>Info</span>
+							</button>
+						</div>
+					</div>
+				</>
+			)}
 		</div>
 	);
 };
 
-export default Featured;
+function mapStoreToProps(store) {
+	return {
+		featured: store.video.featured,
+	};
+}
+
+export default connect(mapStoreToProps)(Featured);

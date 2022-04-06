@@ -1,18 +1,21 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
+import { connect } from 'react-redux';
 import './register.scss';
 
-const Register = () => {
+import { register } from '../../reducers/authReducer/AuthActions';
+
+const Register = ({ dispatch, isFetching }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const emailRef = useRef();
-	const passwordRef = useRef();
+	const [moveForward, setMoveForward] = useState(false);
 
-	const handleStart = () => {
-		setEmail(emailRef.current.value);
-	};
-
-	const handleFinish = () => {
-		setPassword(passwordRef.current.value);
+	const handleRegister = (e) => {
+		e.preventDefault();
+		const newUser = {
+			email,
+			password,
+		};
+		dispatch(register(newUser));
 	};
 
 	return (
@@ -29,17 +32,32 @@ const Register = () => {
 				<p>
 					Ready to watch? Enter your email to create or restart your membership.
 				</p>
-				{!email ? (
+				{!moveForward ? (
 					<div className='input'>
-						<input type='email' placeholder='Email Address' ref={emailRef} />
-						<button className='register-btn' onClick={handleStart}>
+						<input
+							type='email'
+							placeholder='Email Address'
+							onChange={(e) => setEmail(e.target.value)}
+						/>
+						<button
+							className='register-btn'
+							onClick={() => setMoveForward(true)}
+						>
 							Get Started
 						</button>
 					</div>
 				) : (
 					<form className='input'>
-						<input type='password' placeholder='Password' ref={passwordRef} />
-						<button className='register-btn' onClick={handleFinish}>
+						<input
+							type='password'
+							placeholder='Password'
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+						<button
+							className='register-btn'
+							onClick={handleRegister}
+							disabled={isFetching}
+						>
 							Submit
 						</button>
 					</form>
@@ -49,4 +67,10 @@ const Register = () => {
 	);
 };
 
-export default Register;
+function mapStoreToProps(store) {
+	return {
+		isFetching: store.auth.isFetching,
+	};
+}
+
+export default connect(mapStoreToProps)(Register);
