@@ -35,9 +35,9 @@ const Featured = ({ type, dispatch, featured }) => {
 			)}
 			{featured && (
 				<>
-					<img src={featured?.img} alt='' />
+					<video autoPlay controls loop src={featured?.trailer} />
 					<div className='info'>
-						<img src={featured?.imgTitle} alt='' />
+						<img src={featured?.img} alt='' />
 						<span className='desc'>{featured?.desc}</span>
 						<div className='buttons'>
 							<button className='play'>
